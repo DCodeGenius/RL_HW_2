@@ -68,7 +68,14 @@ print("")
 
 def compute_vpi(pi, mdp, gamma):
     # use pi[state] to access the action that's prescribed by this policy
-    V = np.ones(mdp.nS) # REPLACE THIS LINE WITH YOUR CODE
+    A = np.zeros((mdp.nS, mdp.nS))
+    b = np.zeros(mdp.nS)
+    for s in range(mdp.nS):
+        A[s, s] = 1.0
+        for p, ns, r in mdp.P[s][pi[s]]:
+            A[s, ns] -= gamma * p
+            b[s] += p * r
+    V = np.linalg.solve(A, b)
     return V
 
 actual_val = compute_vpi(np.arange(16) % mdp.nA, mdp, gamma=GAMMA)
@@ -78,11 +85,13 @@ print("Policy Value: ", actual_val)
 # Programing Question No. 2, part 2 - implement where required.
 
 def compute_qpi(vpi, mdp, gamma):
-    Qpi = np.zeros([mdp.nS, mdp.nA]) # REPLACE THIS LINE WITH YOUR CODE
+    Qpi = np.array([[sum(p * (r + gamma * vpi[ns]) for p, ns, r in mdp.P[s][a])
+                     for a in range(mdp.nA)]
+                    for s in range(mdp.nS)])
     return Qpi
 
 Qpi = compute_qpi(np.arange(mdp.nS), mdp, gamma=0.95)
-print("Policy Action Value: ", actual_val)
+print("Policy Action Value: ", Qpi)
 
 #################################
 # Programing Question No. 2, part 3 - implement where required.
@@ -98,6 +107,8 @@ def policy_iteration(mdp, gamma, nIt):
     for it in range(nIt):
         # YOUR CODE HERE
         # you need to compute qpi which is the state-action values for current pi
+        vpi = compute_vpi(pi_prev, mdp, gamma)
+        qpi = compute_qpi(vpi, mdp, gamma)
         pi = qpi.argmax(axis=1)
         print("%4i      | %6i        | %6.5f"%(it, (pi != pi_prev).sum(), vpi[0]))
         Vs.append(vpi)
@@ -107,4 +118,11 @@ def policy_iteration(mdp, gamma, nIt):
 
 
 Vs_PI, pis_PI = policy_iteration(mdp, gamma=0.95, nIt=20)
+import os
+os.makedirs("outputs", exist_ok=True)
 plt.plot(Vs_PI);
+plt.xlabel("Policy iteration")
+plt.ylabel("State value")
+plt.title("Policy Iteration: State Values by Iteration")
+plt.savefig(os.path.join("outputs", "policy_iteration_state_values.png"), bbox_inches="tight")
+plt.close()
