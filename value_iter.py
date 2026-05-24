@@ -119,7 +119,9 @@ os.makedirs("outputs", exist_ok=True)
 
 for i, (V, pi) in enumerate(zip(Vs_VI[:10], pis_VI[:10])):
     plt.figure(figsize=(3,3))
-    plt.imshow(V.reshape(4,4), cmap='gray', interpolation='none', clim=(0,1))
+    im = plt.imshow(V.reshape(4,4), cmap='gray', interpolation='none', clim=(0,1))
+    plt.title("Value Iteration %d" % i)
+    plt.colorbar(im, fraction=0.046, pad=0.04, label="State value")
     ax = plt.gca()
     ax.set_xticks(np.arange(4)-.5)
     ax.set_yticks(np.arange(4)-.5)

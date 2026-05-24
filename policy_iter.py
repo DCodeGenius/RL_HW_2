@@ -124,5 +124,6 @@ plt.plot(Vs_PI);
 plt.xlabel("Policy iteration")
 plt.ylabel("State value")
 plt.title("Policy Iteration: State Values by Iteration")
+plt.legend(["s%d" % s for s in range(mdp.nS)], loc="center left", bbox_to_anchor=(1, 0.5), fontsize="small")
 plt.savefig(os.path.join("outputs", "policy_iteration_state_values.png"), bbox_inches="tight")
 plt.close()
