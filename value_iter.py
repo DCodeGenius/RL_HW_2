@@ -139,3 +139,13 @@ for i, (V, pi) in enumerate(zip(Vs_VI[:10], pis_VI[:10])):
     plt.grid(color='b', lw=2, ls='-')
     plt.savefig(os.path.join("outputs", "value_iteration_%02d.png" % i), bbox_inches="tight")
     plt.close()
+
+plt.figure(figsize=(8, 5))
+plt.plot(np.array(Vs_VI))
+plt.xlabel("Iteration")
+plt.ylabel("State value")
+plt.title("Value Iteration: State Values by Iteration")
+plt.legend(["s%d" % s for s in range(mdp.nS)], loc="center left", bbox_to_anchor=(1, 0.5), fontsize="small")
+plt.grid(True)
+plt.savefig(os.path.join("outputs", "state_values_by_iteration.png"), bbox_inches="tight")
+plt.close()
